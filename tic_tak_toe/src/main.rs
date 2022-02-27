@@ -2,11 +2,12 @@ use std::io::{self, Write};
 
 fn main() {
     let mut board = Vec::new();
-    for _ in 0..2 {
-        board.push(Vec::new());
-    }
-    for col in 0..2 {
-        board[col].push(String::from("　"));
+    for _ in 0..3 {
+        let mut row = Vec::new();
+        for _ in 0..3 {
+            row.push(String::from("*"));
+        }
+        board.push(row);
     }
 
     println!("Game start!!");
@@ -19,24 +20,29 @@ fn main() {
     }
 }
 
-fn disp_board(board: &Vec<Vec<String>>) {
-    for row in board {
-        for cell in row {
-            println!("{}", cell);
+fn disp_board(board: &[Vec<String>]) {
+    let mut disp = String::new();
+
+    for row in board.iter() {
+        for cell in row.iter() {
+            disp = disp.clone() + cell;
         }
+        disp = disp.clone() + "\n";
     }
+    print!("{}", disp);
 }
 
 fn write_board(board: &mut Vec<Vec<String>>, row: usize, col: usize) {
-    board[row][col] = "○".to_string();
+    board[row][col] = "1".to_string();
 }
 
 fn input_row() -> usize {
     print!("row>");
+    io::stdout().flush().unwrap();
     let mut row = String::new();
     io::stdin().read_line(&mut row).expect("Text Read error.");
-
-    let row :usize = row.parse().expect("Row is not number");
+    let row = row.replace("\n", "");
+    let row = row.parse::<usize>().unwrap_or_else(|_| panic!("Row is not number {}", row));
 
     if row > 3 {
         panic!("Row number is invalid");
@@ -46,10 +52,11 @@ fn input_row() -> usize {
 
 fn input_column() -> usize {
     print!("col>");
+    io::stdout().flush().unwrap();
     let mut col = String::new();
     io::stdin().read_line(&mut col).expect("Text Read error.");
-
-    let col :usize = col.parse().expect("Column is not number");
+    let col = col.replace("\n", "");
+    let col = col.parse::<usize>().unwrap_or_else(|_| panic!("Column is not number {}", col));
 
     if col > 3 {
         panic!("Column number is invalid");
@@ -58,5 +65,6 @@ fn input_column() -> usize {
 }
 
 fn clear_display() {
-    io::stdout().write("\u{001b}c".as_bytes()).unwrap();
+    io::stdout().write_all("\u{001b}c".as_bytes()).unwrap();
+    io::stdout().flush().unwrap();
 }
