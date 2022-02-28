@@ -11,12 +11,18 @@ fn main() {
     }
 
     println!("Game start!!");
+    let mut turn = 1;
     loop {
         clear_display();
         disp_board(&board);
         let row = input_row();
         let col = input_column();
-        write_board(&mut board, row, col);
+        write_board(turn.to_string(), &mut board, row, col);
+
+        if check_board(turn.to_string(), &board) == false {
+            break;
+        }
+        if turn == 1 {turn = 0} else {turn = 1}
     }
 }
 
@@ -32,8 +38,8 @@ fn disp_board(board: &[Vec<String>]) {
     print!("{}", disp);
 }
 
-fn write_board(board: &mut Vec<Vec<String>>, row: usize, col: usize) {
-    board[row][col] = "1".to_string();
+fn write_board(turn: String, board: &mut Vec<Vec<String>>, row: usize, col: usize) {
+    board[row][col] = turn;
 }
 
 fn input_row() -> usize {
@@ -67,4 +73,62 @@ fn input_column() -> usize {
 fn clear_display() {
     io::stdout().write_all("\u{001b}c".as_bytes()).unwrap();
     io::stdout().flush().unwrap();
+}
+
+fn check_board(num: String, board: &[Vec<String>]) -> bool {
+    let check_table = [
+        [
+            [true,   true,  true],
+            [false, false, false],
+            [false, false, false],
+        ],
+        [
+            [false, false, false],
+            [true,   true,  true],
+            [false, false, false],
+        ],
+        [
+            [false, false, false],
+            [false, false, false],
+            [true,   true,  true],
+        ],
+        [
+            [true, false, false],
+            [true, false, false],
+            [true, false, false],
+        ],
+        [
+            [false, true, false],
+            [false, true, false],
+            [false, true, false],
+        ],
+        [
+            [false, false, true],
+            [false, false, true],
+            [false, false, true],
+        ],
+        [
+            [true,  false, false],
+            [false,  true, false],
+            [false, false, true],
+        ],
+        [
+            [false, false, true],
+            [false,  true, false],
+            [true,  false, false],
+        ],
+    ];
+
+    for row in 0..3 {
+        for col in 0..3 {
+            for checker in check_table.iter() {
+                if checker[row][col] {
+                    if num != board[row][col] {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    true
 }
