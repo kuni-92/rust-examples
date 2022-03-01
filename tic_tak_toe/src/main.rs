@@ -5,24 +5,24 @@ fn main() {
     for _ in 0..3 {
         let mut row = Vec::new();
         for _ in 0..3 {
-            row.push(String::from("*"));
+            row.push(String::from("0"));
         }
         board.push(row);
     }
 
     println!("Game start!!");
     let mut turn = 1;
-    loop {
+    for _ in 0..9 {
         clear_display();
         disp_board(&board);
         let row = input_row();
         let col = input_column();
         write_board(turn.to_string(), &mut board, row, col);
 
-        if check_board(turn.to_string(), &board) == false {
+        if check_board(turn, &board) {
             break;
         }
-        if turn == 1 {turn = 0} else {turn = 1}
+        if turn == 1 {turn = 2} else {turn = 1}
     }
 }
 
@@ -75,7 +75,7 @@ fn clear_display() {
     io::stdout().flush().unwrap();
 }
 
-fn check_board(num: String, board: &[Vec<String>]) -> bool {
+fn check_board(num: u32, board: &[Vec<String>]) -> bool {
     let check_table = [
         [
             [true,   true,  true],
@@ -123,7 +123,7 @@ fn check_board(num: String, board: &[Vec<String>]) -> bool {
         for col in 0..3 {
             for checker in check_table.iter() {
                 if checker[row][col] {
-                    if num != board[row][col] {
+                    if num != board[row][col].parse::<u32>().unwrap() {
                         return false;
                     }
                 }
