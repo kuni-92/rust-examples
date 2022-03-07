@@ -1,13 +1,14 @@
-use std::{sync::{Arc, Mutex, mpsc}, thread::{self, JoinHandle}};
+use std::{sync::{Arc, Mutex, mpsc}, thread::{self, JoinHandle}, time::Duration};
 
 fn main() {
     let pool: ThreadPool = ThreadPool::new(4);
 
-    for _ in 0..9 {
-        pool.exec(|| {
-            println!("Hello, world!");
+    for index in 0..9 {
+        pool.exec(move || {
+            println!("Hello, world! index:{}", index);
         });
     }
+    thread::sleep(Duration::from_secs(5));
 }
 
 struct ThreadPool {
@@ -59,6 +60,7 @@ impl Worker {
     fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
         let thread = thread::spawn(move || {
             loop {
+                println!("worker {} got the job", id);
                 let job = receiver.lock().unwrap().recv().unwrap();
                 job.call_box();
             }
