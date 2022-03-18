@@ -1,8 +1,11 @@
 use std::{env, io::{Read, Write}, net::{TcpListener, TcpStream}};
 
 fn main() {
-    let port = env::args().last().expect("Specifies the port number to listen.");
-    let port = format!("127.0.0.1:{}", port);
+    let args: Vec<String> = env::args().collect();
+    let addr = args[1].clone();
+    println!("address is {}", addr);
+    let port = args[2].clone();
+    let port = format!("{}:{}",addr, port);
 
     println!("Start server!!!");
     println!("The port number to bind is {}", port);
